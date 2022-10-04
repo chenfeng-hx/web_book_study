@@ -1,0 +1,24 @@
+div {
+    position: relative;
+    height: 100px;
+    width: 250px;
+    border: 10px single black;
+    color: black;
+    text-align: center;
+}
+
+div.one {
+    background-color: red;
+}
+
+div.two {
+    background-color: green;
+}
+
+div.three {
+    background-color: blue;
+}
+
+div.four {
+    background-color: yellow;
+}
