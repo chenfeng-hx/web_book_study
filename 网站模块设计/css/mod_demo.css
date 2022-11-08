@@ -1,0 +1,86 @@
+/* 去除浏览器自带边距属性 */
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+/* 父盒子格式设置：水平垂直居中，基础宽高 */
+.max_box {
+    width:  600px;
+    height: 350px;
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    margin: auto;
+}
+
+/* 导航栏盒子制作：继承父盒子宽度 */
+.nav {
+    width: 100%;
+    height: 50px;
+    background-image: url(../image/nav_image.png);
+    background-repeat: no-repeat;
+    background-position: 0px 14px;  
+    line-height: 50px; 
+}
+
+/* 导航栏字体设置 */
+.nav_font {
+    font-weight: 400;
+    color: #6a6866;
+    margin-left: 25px;
+    font-size: 17;
+}
+
+/* 导航栏字体设置 */
+.nav_font span {
+    float: right;
+    color: #888;
+    font-size: 13;
+    margin-right: 58px;
+}
+
+/* 水平分割线制作 */
+.line_img {
+    width: 100%;
+    height: 15px;
+    background-image: url(../image/border_image.png);
+    background-repeat: no-repeat;
+}
+
+/* 学生图片的浮动方式 */
+img {
+    width: 135px;
+    float: left;
+    margin: 10px 25px 18px 5px;
+}
+
+/* 超链接文字样式设计 */
+a {
+    text-decoration: none;
+    font-weight: 400;
+    color: #68717e;
+    font-size: 17;
+}
+
+/* 图片右侧文字的布局方式 */
+.float_img {
+    float: left;
+    margin: 10px 2px 2px 2px;
+}
+
+/* 内容简介文字样式设计 */
+.font3 {
+    color: #b8bdc7;
+    font-size: 14;
+}
+
+/* 下方文字内容样式设计 */
+.lower_contact {
+    width: 100%;
+    height: auto;
+    float: left;
+    margin: 10px 2px 2px 2px;
+}
