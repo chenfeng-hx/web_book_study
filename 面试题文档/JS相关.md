@@ -799,6 +799,286 @@ console.log('外部a: ', a);
 
 
 
+## setTimeout(fn,100);100毫秒是如何权衡的
+
+100ms指的是将回调函数加入到任务队列所花的时间。至于具体什么时候执行，需要看主线程的执行栈中是否还有任务在执行。
+
+```js
+(async function hello() {
+	await new Promise(resolve => {
+		setTimeout(() => {
+			resolve();
+		}, 5000);
+	})
+	setTimeout(() => {
+		console.log('hello');
+	}, 100)
+})();
+// 等待了“很长时间”才返回结果
+```
+
+
+
+## 定时器实现动画的最佳时间：16.6ms
+
+大多数电脑显示器的刷新频率是60HZ，大概相当于每秒钟重绘60次。因此，最平滑的动画效的最佳循环间隔是1000ms/60，约等于16.6ms
+
+
+
+## setInterval存在的问题
+
+定时器的代码执行部分不断的被调入任务队列中，**如果定时器的执行时间比间隔时间长，最终可能导致定时器堆叠在一起执行。**
+
+js引擎为了解决这个问题，采用的方式是若**任务队列中存在这个定期器，则不会将新的定时器放入任务队列**，这样做的**弊端是可能导致某些间隔被跳过**。
+
+解决方法：
+
+循环调用setTimeout来实现setInterval:（即用setTimeout来实现setInterval）
+
+```js
+setTimeout(function fn(){
+    ...
+	setTimeout(fn,delay)
+},delay)
+```
+
+
+
+## requestAnimationFrame
+
+**js动画的要求：**一方面，循环间隔必须足够短，这样才能让不同的动画效果显得平滑流畅；另一方面，循环间隔还要足够长，这样才能确保浏览器有能力渲染产生的变化。
+
+**用定时器实现js动画存在的问题：** 定时器回调函数执行的时机不精确。定时器中的延时指的是将回调函数加入到任务队列所需花的时间，如果主线程中还有任务在执行，就不能确保回调函数在放入队列后马上执行，这就造成了执行时机的不精确。
+
+requestAnimationFrame:
+
+- 特点：requestAnimationFrame采用系统时间间隔，保证了最佳的绘制效率。
+
+- 使用方法：requestAnimationFrame接收一个回调函数，这个回调函数会在下一次浏览器重绘之前调用。
+
+
+
+## 分别setInterval,setTimeout,requestAnimationFrame制作有个简单的进度条
+
+1. setInterval：
+
+```html
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+		  content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+<body>
+	<div style="width: 0; height: 20px; background-color: orangered;"></div>
+	<script>
+		let process = document.getElementsByTagName('div')[0];
+		let timer = setInterval(() => {
+			if (parseInt(process.style.width) >= 100) return clearInterval(timer);
+			console.log(process.style.width);
+			process.style.width = parseInt(process.style.width) +1 + 'px';
+			process.innerText = parseInt(process.style.width) + '%';
+		}, 10);
+	</script>
+</body>
+</html>
+```
+
+2. setTimeout：
+
+```html
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+		  content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+<body>
+<div style="width: 0; height: 20px; background-color: orangered;"></div>
+<script>
+	let process = document.getElementsByTagName('div')[0];
+	let timer = setTimeout(function fn() {
+		if (parseInt(process.style.width) < 100) {
+			console.log(process.style.width);
+			process.style.width = parseInt(process.style.width) +1 + 'px';
+			process.innerText = parseInt(process.style.width) + '%';
+			timer = setTimeout(fn, 10);
+		} else {
+			return clearTimeout(timer);
+		}
+	}, 10);
+</script>
+</body>
+</html>
+```
+
+3. requestAnimationFrame:类似于setTimeout,需要一次次的调用：
+
+```html
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+		  content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+<body>
+<div style="width: 0; height: 20px; background-color: orangered;"></div>
+<script>
+	let process = document.getElementsByTagName('div')[0];
+	let timer = requestAnimationFrame(function fn() {
+		if (parseInt(process.style.width) < 100) {
+			console.log(process.style.width);
+			process.style.width = parseInt(process.style.width) +1 + 'px';
+			process.innerText = parseInt(process.style.width) + '%';
+			requestAnimationFrame(fn);
+		} else {
+			cancelAnimationFrame(timer);
+		}
+	});
+</script>
+</body>
+</html>
+```
+
+
+
+## js中的轮播实现原理？假如一个页面上有两个轮播，你会怎么实现？
+
+1. 让图片存在一个数组中，然后将最后一张图片重复添加在数组的头部，将第一张图片重复添加在数组的最后。
+2. 然后准备一个只能显示一张图片的盒子，对盒子做溢出隐藏处理。
+
+3. 通过定时器增减索引，显示对应的图片，实现轮播功能。
+
+4. 如果有两个轮播，可封装一个轮播组件，将需要轮播的图片作为参数传递
+
+
+
+## 数组去重
+
+https://segmentfault.com/a/1190000016418021
+
+```js
+// Set方法：将数组先转化为Set再转化为数组
+function arrayToSet(array) {
+	// 通过 for-of
+/*	let middle = new Set(array);
+	let newArray = [];
+	for (let item of middle) {
+		newArray.push(item);
+	}*/
+
+	// 通过扩展运算符
+	// let newArray = [...new Set(array)];
+
+	// 通过 Array.from 浅拷贝一个可迭代对象
+	let newArray = Array.from(new Set(array));
+
+	return newArray;
+}
+
+// 不断去寻找一个元素，如果没有则加入新数组，否则就丢弃
+function remove(array) {
+	let newArray = [];
+	// 通过 includes:includes底层使用 sameValueZero() 比较
+/*	array.forEach(item => {
+		if (!newArray.includes(item)) {
+			newArray.push(item);
+		}
+	})*/
+
+	// 通过map 的 has和set 方法（属性名不可重复）
+/*	const map = new Map();
+	array.forEach(item => {
+		if (!map.has(item)) {
+			map.set(item, true);
+			newArray.push(item);
+		}
+	})*/
+
+	// 利用对象属性名不可重复
+/*	const obj = {};
+	array.forEach(item => {
+		if (!obj[item]) {
+			obj[item] = true;
+			newArray.push(item);
+		}
+	})*/
+
+	// reduce + includes
+	/*newArray = array.reduce((pre, cur) => {
+		if (pre.includes(cur) === false) {
+			pre.push(cur);
+		}
+		return pre;
+	}, []);*/
+
+	// hasOwnProperty方法可以判断类型两个{},{}
+	//  typeof {}+{}为object[object Object]，判断有没有空对象，已经有的话return false，没有就作为对象的属性加进去，值为true
+/*	const obj = {};
+	newArray = array.filter(item => {
+		        return obj.hasOwnProperty(typeof item + item) ? false : obj[typeof item +item] = true
+		    })*/
+
+	// 下列方法无法判断NaN和NaN重复的情况
+
+	// 过滤器 filter方法+indexOf()方法，indexOf会返回第一个找到的索引，如果当前数值之前出现过，
+	//    则indexOf返回的索引恒为之前的那个数与当前数值的索引不一致，故可以去重
+/*	    newArray = array.filter((item, index) => {
+	        return array.indexOf(item) === index;
+	    })*/
+
+	// indexof
+/*	    array.forEach(item => {
+	        if(newArray.indexOf(item) === -1){
+	            newArray.push(item);
+	        }
+	    })*/
+
+
+	// 双循环+splice,比较相邻两个数如果重复用splice删除
+/*	    let len = array.length;
+	    for(let i = 0; i < len - 1; i++){
+	        for(let j = i + 1; j < len; j++){
+	            if(array[i] === array[j]){
+	                array.splice(j,1);
+	                len--;
+	                j--;
+	            }
+	        }
+	    }
+	    return array;*/
+
+
+	// 单循环+sort+splice
+/*	let len = array.length;
+	array = array.sort();
+	for(let i=0;i<len-1;i++){
+			if(array[i]===array[i+1]){
+				array.splice(i+1,1);
+				len--;
+			}
+	}
+	return array;*/
+
+	return newArray;
+}
+
+console.log(remove([1, 2, 2, 3, -1, 1]));
+
+```
+
+
+
+
+
+
+
 什么是闭包，闭包的用途，闭包的缺点，闭包的使用场景
 
 JS 有哪些数据类型，基本数据类型和引用数据类型有什么区别，判断数据类型的方法有哪些

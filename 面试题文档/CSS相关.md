@@ -280,13 +280,10 @@ css3比css2多了好多针对移动端的特性，比如：圆角：border-radiu
 
 盒模型包括两种：IE盒模型和w3c标准盒模型
 
-  IE盒模型总宽度即就是width宽度=border+padding+内容宽度
+- 标准盒模型：width = content + border + padding
+- 低版本 IE 盒模型：width = content + border + padding
 
-  标准盒模型总宽度＝border+padding+width
-
-那如何在IE盒模型宽度和标准盒模型总宽度之间切换呢，可以通过box-sizing:border-box或设置成content-box来切换
-
-  其中：
+盒模型之间的切换：
 
 - box-sizing：border-box  //IE盒模型
 - box-sizing：content-box  //w3c盒模型
@@ -374,11 +371,32 @@ vue3 版本使用 ::v-deep， /deep/ 在 vue3 版本中会报错，在 sass 文�
 
 
 
+## BFC
+
+BFC（Block Formatting Context）格式化上下文，是 Web 页面中盒模型布局的 CSS 渲染模式，指一个独立的渲染区域或者说是一个隔离的独立容器。
+
+形成 BFC 的条件：
+
+-  浮动元素，float 除 none 以外的值
+-  定位元素，position（absolute，fixed）
+-  display 为以下其中之一的值 inline-block，table-cell，table-caption
+-  overflow 除了 visible 以外的值（hidden，auto，scroll）
+
+BFC 的特性：
+
+-  内部的 Box 会在垂直方向上一个接一个的放置。
+-  垂直方向上的距离由 margin 决定
+-  bfc 的区域不会与 float 的元素区域重叠。
+-  计算 bfc 的高度时，浮动元素也参与计算
+-  bfc 就是页面上的一个独立容器，容器里面的子元素不会影响外面元素。
 
 
-BFC
 
-实现元素隐藏
+## 实现元素隐藏
+
+
+
+
 
 如何实现元素水平居中
 
