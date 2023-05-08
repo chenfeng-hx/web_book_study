@@ -30,11 +30,36 @@ meta作用：告诉机器浏览器该如何解析该页面，描述这个页面�
 
 
 
+## css 和 js 引入设置
+
+script标签的引入一般放在body最后，这样避免脚本过大，加载时间长，导致页面长时间空白，因为**渲染进程与js进程是互斥的，脚本会阻塞页面的渲染，脚本之间的加载是同步进行的，按引入顺序执行**，但是以下两个属性会影响脚本执行与页面渲染的顺序
+
+- defer：不会阻塞渲染，这样即使放在header内部，也不会阻塞页面加载，不过js会先于document加载完成，并且也不会影响脚本之间的执行顺序，按照引入顺序执行
+- async：与defer一样，都是解决阻塞渲染，但它是在document加载完成后才执行，并且它的执行顺序是按照谁先加载完成执行谁，所以对于文件顺序有要求，存在前后依赖的不要使用它
 
 
-css 和 js 引入设置
 
-HTML 的块级元素、行内元素、行内块元素有哪些，区别是什么
+## HTML 的块级元素、行内元素、行内块元素有哪些，区别是什么
+
+1. 块级元素：div，h1-h6，p，ul，ol，dl，li，hr，dt，dd，form，table
+	- 块元素独占一行
+	- 宽高生效
+	- 默认宽和父元素一样，内容撑开高度
+	- margin，padding全部生效
+2. 行内元素：em，i，del，small，strong，ins，span，a
+	- 宽高不生效
+	- 左右margin生效上下不生效
+	- 在一行排列
+	- 大小靠内容撑开
+	- padding都生效
+3. 行内块元素：img，input(表单元素，除去form)
+	- 在一行排列
+	- 宽高生效
+	- margin，padding生效
+
+
+
+
 
 html5有哪些新特性、移除了哪些元素？如何处理 HTML 5 新标签的浏览器兼容问题
 
@@ -103,8 +128,8 @@ BOM 对象包含五个部分：
   - 调用系统对话框向用户显示信息
   	- alert()：消息框，显示带有一条指定消息和一个 OK 按钮的警告框
   	- prompt()：输入框，用于显示课题是用户进行输入的对话框，返回提示框中的值。有两个参数：
-    		- 第一个参数：要在对话框中显示的纯文本。
-    		- 第二个参数：默认的输入文本。
+        		- 第一个参数：要在对话框中显示的纯文本。
+        		- 第二个参数：默认的输入文本。
   	- confirm()：显示一个带有指定消息和 OK 及取消按钮的对话框。返回 true/false。
 2. History 对象：浏览器当前窗口的访问历史记录对象，window 对象的 一部分，可通过 window.history 访问，但因为 window 是顶层对象，所以只需要 history 即可访问
 	- history.length ：返回浏览器历史列表中的 URL 数量
@@ -311,43 +336,62 @@ window.addEventListener("scroll", function () {
 
 
 
-## JS 拖动及拖拽功能的实现
+## html5有哪些新特性、移除了那些元素？如何处理HTML5新标签的浏览器兼容问题？如何区分 HTML 和 HTML5？
 
-### 拖动功能的实现
+**新特性：**
 
-**前置条件：**
+- HTML5 现在已经不是 SGML 的子集，主要是关于图像，位置，存储，多任务等功能的增加。
+- 拖拽释放(Drag and drop) API
+- 语义化更好的内容标签（header,nav,footer,aside,article,section）
+- 音频、视频API(audio,video)
+- 画布(Canvas) API
+- 地理(Geolocation) API
+- 本地离线存储 localStorage 长期存储数据，浏览器关闭后数据不丢失；sessionStorage 的数据在浏览器关闭后自动删除
+- 表单控件，calendar、date、time、email、url、search
+- 新的技术webworker, websocket, Geolocation
 
-1. 拖动事件的三个过程：鼠标按下mousedown,鼠标移动mousemove,鼠标松开mouseup，鼠标按下后执行mousemove事件。
+**移除元素：**
 
-2. 盒子采用绝对定位，通过left和top属性来修改位置。
+- 纯表现的元素：basefont，big，center，font, s，strike，tt，u；
+- 对可用性产生负面影响的元素：frame，frameset，noframes；
 
+ **h5新标签兼容：**
 
+ IE8/IE7/IE6支持通过document.createElement方法产生的标签，可以利用这一特性让这些浏览器支持HTML5新标签，当然最好的方式是直接使用成熟的框架、使用最多的是html5shiv 框架
 
-**方法一：（直接根据鼠标移动的距离确定元素移动的距离）**
+ **如何区分：**
 
-1. 鼠标的坐标通过clientX,clientY获取：
-2. 盒子的定位信息：鼠标移动时候的坐标-鼠标按下去时候的坐标+元素初始情况下的offetLeft.
-
-**方法二：**
-
-1. 鼠标的坐标通过pageX,pageY获取：
-2. 先计算鼠标在盒子中的坐标，这是不变的。然后在mousemove的时候通过pageX和pageY减去在盒子中的坐标计算出盒子边缘应该修改为的偏移量。
+ DOCTYPE声明\新增的结构元素\功能元素
 
 
 
-### 拖拽功能的实现
+## 如何实现浏览器内多个标签页之间的通信
 
-使用html5提供的拖拽API（Drag 和 drop）
+调用 localStorage、cookie 等本地存储方式
 
-拖拽功能涉及的基本事件：
 
-dragstart:在开始拖放元素时触发。（事件源：被拖拽的元素）
 
-这一步需要做的是获取被拖拽元素的id。拖拽事件对象中的dataTransfer属性是专门用来存储拖动过程中的数据的。ev.dataTransfer.setData("key",value)
-dragover：在被拖放在某元素内移动时触发。（事件源：目标元素）
 
-阻止dragover的默认事件（不允许被拖拽）
-drop：目标元素完全接受被拖放元素时触发。（事件源：目标元素）
 
-阻止drop的默认事件（以链接的形式打开），然后获取之前保存的元素的id ev.dataTransfer.getData("key")，然后将该元素添加到目标元素中。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

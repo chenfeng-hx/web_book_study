@@ -2,7 +2,31 @@
 
 ## css3 新增特性有哪些
 
-css3比css2多了好多针对移动端的特性，比如：圆角：border-radius,盒阴影：box-shadow,还有动画：transition(过渡),transform（实现位移，倾斜，旋转，绽放）,animation（关键帧动画）等
+css3比css2多了好多针对移动端的特性，比如：
+
+- 圆角：border-radius
+- 边框图片：border-image、border-width
+- 盒阴影：box-shadow、文字阴影：text-shadow
+- 动画：transition(过渡),transform（实现位移，倾斜，旋转，绽放）,animation（关键帧动画）
+- linear-gradient：线性渐变，radial-gradient：径向渐变，如用在background
+- 2D/3D转换 transform：rotate(旋转) scale(缩放) translate(位移)
+- @media媒体查询，根据屏幕宽度，设置，用来解决移动端适配,根据屏幕大小使相应的css生效
+- flex布局(弹性盒子)
+- 
+
+
+
+## CSS3新增伪类举例
+
+http://t.csdn.cn/3hObO
+
+-  p:first-of-type 
+-  p:last-of-type 
+-  p:only-of-type 
+-  p:only-child 
+-  p:nth-child(2) 
+-  :enabled :disabled 控制表单控件的禁用状态。
+-  :checked 单选框或复选框被选中。
 
 
 
@@ -175,39 +199,104 @@ css3比css2多了好多针对移动端的特性，比如：圆角：border-radiu
 
 ## clearfix 是解决什么问题的（div 塌陷问题如何解决）
 
-浮动元素可能会导致包含它们的父元素高度塌陷，这是因为父元素无法自动计算浮动元素的高度
+浮动元素可能会导致包含它们的父元素高度塌陷，这是因为父元素无法自动计算浮动元素的高度（浮动元素父元素高度自适应：父元素不写高度时，子元素写了浮动父元素才发生高度塌陷）
 
 解决的方法有很多，主要目的是让父级元素有高度
 
 1. 给父级元素设置绝对定位
 
-	```html
-	<!DOCTYPE html>
-	<html lang="zh-CN">
-		<head>
-			<meta charset="UTF-8">
-			<title>高度塌陷问题.html</title>
-			<style>
-				ul {
-					position: absolute;
-				}
-				ul li {
-					float: left;
-				}
-			</style>
-		</head>
-		<body>
-			<!-- 注释 -->
-			<ul>
-				<li>1</li>
-				<li>2</li>
-				<li>3</li>
-			</ul>
-		</body>
-	</html>
-	```
+  ```html
+  <!DOCTYPE html>
+  <html lang="zh-CN">
+  	<head>
+  		<meta charset="UTF-8">
+  		<title>高度塌陷问题.html</title>
+  		<style>
+  			ul {
+  				position: absolute;
+  			}
+  			ul li {
+  				float: left;
+  			}
+  		</style>
+  	</head>
+  	<body>
+  		<!-- 注释 -->
+  		<ul>
+  			<li>1</li>
+  			<li>2</li>
+  			<li>3</li>
+  		</ul>
+  	</body>
+  </html>
+  ```
 
-2. 给父级元素设置 overflow：hidden
+2. 给父级元素设置 overflow：hidden 或 auto
+
+  ```html
+  <!DOCTYPE html>
+  <html lang="zh-CN">
+  <head>
+  	<meta charset="UTF-8">
+  	<title>高度塌陷问题.html</title>
+  	<style>
+  		ul {
+  			overflow: hidden;
+  		}
+  		ul li {
+  			float: left;
+  		}
+  	</style>
+  </head>
+  <body>
+  <!-- 注释 -->
+  <ul>
+  	<li>1</li>
+  	<li>2</li>
+  	<li>3</li>
+  </ul>
+  </body>
+  </html>
+  ```
+
+3. 通过伪对象来实现（clear清除浮动，添加空 div 法，在浮动元素下方添加空 div，但是弊端是增加了无意义的标签）
+
+  ```html
+  <!DOCTYPE html>
+  <html lang="zh-CN">
+  <head>
+  	<meta charset="UTF-8">
+  	<title>高度塌陷问题.html</title>
+  	<style>
+  		.clearfix:after {
+  			content: " ";
+  			display: block;
+  			clear: both;
+  			height: 0;
+              /*
+              overflow: hidden;
+              visibility: hidden;
+              */
+  		}
+  		ul li {
+  			float: left;
+  		}
+  	</style>
+  </head>
+  <body>
+  <!-- 注释 -->
+  <ul>
+  	<li>1</li>
+  	<li>2</li>
+  	<li>3</li>
+  	<div class="clearfix"></div>
+  </ul>
+  </body>
+  </html>
+  
+  ```
+
+4. 给父元素设置高度
 
 	```html
 	<!DOCTYPE html>
@@ -217,7 +306,7 @@ css3比css2多了好多针对移动端的特性，比如：圆角：border-radiu
 		<title>高度塌陷问题.html</title>
 		<style>
 			ul {
-				overflow: hidden;
+				height: 20px;
 			}
 			ul li {
 				float: left;
@@ -235,7 +324,7 @@ css3比css2多了好多针对移动端的特性，比如：圆角：border-radiu
 	</html>
 	```
 
-3. 通过为对象来实现
+5. 父级元素同时添加浮动（需要同时给同级元素浮动）
 
 	```html
 	<!DOCTYPE html>
@@ -244,11 +333,8 @@ css3比css2多了好多针对移动端的特性，比如：圆角：border-radiu
 		<meta charset="UTF-8">
 		<title>高度塌陷问题.html</title>
 		<style>
-			.clearfix:after {
-				content: " ";
-				display: block;
-				clear: both;
-				height: 0;
+			ul {
+				float: left;
 			}
 			ul li {
 				float: left;
@@ -261,14 +347,41 @@ css3比css2多了好多针对移动端的特性，比如：圆角：border-radiu
 		<li>1</li>
 		<li>2</li>
 		<li>3</li>
-		<div class="clearfix"></div>
 	</ul>
 	</body>
 	</html>
-	
 	```
 
-4. 
+6. 给父元素设置 display：inline-block，但是margin： 0 auto 居中方法会失效
+
+	```html
+	<!DOCTYPE html>
+	<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<title>高度塌陷问题.html</title>
+		<style>
+			ul {
+				display: inline-block;
+			}
+			ul li {
+				float: left;
+			}
+		</style>
+	</head>
+	<body>
+	<!-- 注释 -->
+	<ul>
+		<li>1</li>
+		<li>2</li>
+		<li>3</li>
+	</ul>
+	</body>
+	</html>
+	```
+
+7. 
+
 
 
 
@@ -280,15 +393,14 @@ css3比css2多了好多针对移动端的特性，比如：圆角：border-radiu
 
 盒模型包括两种：IE盒模型和w3c标准盒模型
 
-- 标准盒模型：width = content + border + padding
-- 低版本 IE 盒模型：width = content + border + padding
+- 标准盒模型(chrome、IE9+，添加doctype)：width = content + border + padding+ margin
+- 低版本 IE 盒模型(TE678以下，不添加doctype)：width = content + border + padding
+- inherit可以继承父盒子模型
 
 盒模型之间的切换：
 
 - box-sizing：border-box  //IE盒模型
 - box-sizing：content-box  //w3c盒模型
-
-
 
 
 
@@ -394,24 +506,90 @@ BFC 的特性：
 
 ## 实现元素隐藏
 
+- display：none，不占位，源码可见
+- opacity：0，占位，源码可见，透明度0
+- visibility: hidden 占位，源码可见
+- position: top:-9999px,left:-9999px 利用定位将元素移出视窗
 
 
 
+## 如何实现元素水平居中或者垂直居中
 
-如何实现元素水平居中
+水平居中：
 
-如何实现元素垂直居中
+- 行内元素：text-align：center
+- 块元素: 
+	- margin: 0 auto 
+	-  position: left: 50%; transform: translate(-50%)
 
-Position
+垂直居中：
 
-清除浮动
+- height = line-height
+- verticle-align: middle
+- position: top: 50%; transform: translate(0,-50%)
 
-CSS 选择器有哪些，选择器的优先级
 
-各种布局优缺点
+
+## Position 的区别
+
+- relative 相对定位，不脱标，相对于自身位置进行偏离，不影响元素本身特性，z-index提升层级
+- absolute 绝对定位，脱标，相对于已有定位的父元素进行偏离，都没有就相对于body进行偏离
+- fixed 固定定位，脱标，相对于视窗进行偏离
+
+
+
+## CSS 选择器有哪些，选择器的优先级
+
+- id选择器
+- 类选择器
+- 属性选择器
+- 伪类选择器
+- 标签选择器
+- 伪元素选择器
+- 通配符选择器
+
+优先级：内联样式 > ID选择器(100)> 类选择器(10) = 属性选择器 = 伪类选择器 > 元素选择器(1) = 关系选择器 = 伪元素选择器 > 通配符选择器(0)
+
+
+
+## 各种布局优缺点
+
+1. float 布局
+	- 优点： 比较简单，兼容性也比较好。只要清除浮动做的好，是没有什么问题的
+	- 缺点：浮动元素是脱离文档流，要做清除浮动，这个处理不好的话，会带来很多问题，比如高度塌陷等。
+
+2. 绝对布局
+
+	- 优点：很快捷，设置很方便，而且也不容易出问题
+
+	- 缺点：绝对定位是脱离文档流的，意味着下面的所有子元素也会脱离文档流，这就导致了这种方法的有效性和可使用性是比较差的。
+
+3. flex 布局（grid布局）
+
+	- 优点：简单快捷
+
+	- 缺点：不支持 IE8 及以下
+
+4. table布局
+
+	- 优点：实现简单，代码少
+
+	- 缺点：当其中一个单元格高度超出的时候，两侧的单元格也是会跟着一起变高的，而有时候这种效果不是我们想要的。
+
+
 
 CSS 3 新增伪类举例
 
 解释盒模型宽高值的计算方式，边界塌陷，负值作用、box-sizing 概念
 
 解时限浮动和它的工作原理，清除浮动的方法
+
+
+
+## 三栏布局
+
+### 圣杯布局
+
+
+
+### 双飞翼布局

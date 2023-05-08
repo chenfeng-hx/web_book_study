@@ -40,3 +40,8 @@ function deepCopy(o, c) {
 let result = { name: 'result' };
 result = deepCopy(China, result);
 console.log(result);
+
+// 浅拷贝
+const source = {a: 1, b: 2};
+const target = {...source};
+console.log(target)

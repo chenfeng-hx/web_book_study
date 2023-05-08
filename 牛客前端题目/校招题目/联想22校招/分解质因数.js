@@ -5,14 +5,16 @@
  *    祝你食用愉快！！！
  */
 
+const arr = [];
 function chain(num) {
-	let num1 = num;
-	if (num === 2) return 2;
-	for (let i = 2; i < num1; i++) {
+	if (num === 2) return  arr.push(2);
+	for (let i = 2; i < num / 2; i++) {
 		if (num % i === 0) {
-			reduce
+			arr.push(i);
+			return chain(num / i);
 		}
 	}
+	return arr.join('*');
 }
 
 console.log(chain(100));

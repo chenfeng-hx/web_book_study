@@ -52,11 +52,12 @@
 ```js
 // 创建请求对象
 let xhr = new XMLHttpRequest();
-// 设置请求信息
+// 设置请求信息，利用 open 方法打开与服务器的连接
 xhr.open(method, url);
 // 可以设置请求头，一般不设置
 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 // 发送请求(get 请求不传 body 参数，传 params，只有 post 请求使用)
+// 利用 send 方法发送请求('post'请求时需要额外设置请求头)
 xhr.send(body);
 // 接收响应 responseXML 接收 xml 格式的响应数据  responseText 接收文本格式的响应数据
 xhr.onreadystatechange = function () {
