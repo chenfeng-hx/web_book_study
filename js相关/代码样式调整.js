@@ -35,3 +35,12 @@ var a = 1;
 	console.log(this.a);
 })();
 // console.log(global);
+
+// 声明函数
+function hello() {
+	return "HELLO"
+}
+// 表达式函数
+var h1 = function hello() {
+	return "HELLO"
+}
